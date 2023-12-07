@@ -1,0 +1,89 @@
+[build-system]
+requires = ["poetry-core==1.6.1"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry]
+name = "FastAPI Backend Template"
+version = "0.0.1"
+description = "Basic template for Python FastAPI backends."
+authors = ["Maximilian Gartz <gartz.maximilian@gmail.com>"]
+license = ""
+readme = "README.md"
+packages = [{ include = "app" }]
+homepage = ""
+repository = ""
+documentation = ""
+keywords = []
+classifiers = []
+
+[tool.poetry.dependencies]
+python = ">=3.9.0,<3.10"
+pip = "^23.3.1"
+pre-commit = "^3.5.0"
+fastapi = "^0.104.1"
+pydantic = "^2.5.2"
+uvicorn = {extras = ["standard"], version = "^0.23.2"}
+gunicorn = "^21.2.0"
+toml = "^0.10.2"
+
+
+[tool.poetry.group.dev]
+optional = true
+
+[tool.poetry.group.dev.dependencies]
+ruff = "^0.1.7"
+mypy = "^1.7.1"
+bandit = {extras = ["toml"], version = "^1.7.5"}
+pytest = "^7.4.0"
+pytest-cov = "^4.1.0"
+
+
+[tool.ruff]
+select = ["E", "F"]
+ignore = []
+fixable = ["A", "B", "C", "D", "E", "F"]
+unfixable = []
+src = ["."]
+exclude = ["venv", "**/*_test.py"]
+per-file-ignores = { }
+line-length = 100
+dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
+target-version = "py39"
+
+[tool.ruff.mccabe]
+max-complexity = 10
+
+[tool.mypy]
+python_version = 3.9
+warn_return_any = false
+warn_unused_configs = true
+ignore_missing_imports = true
+follow_imports = "skip"
+disallow_untyped_defs = true
+disable_error_code = ["override", "attr-defined", "import", "empty-body"]
+exclude = ["venv/", "._test\\.py$"]
+
+[tool.bandit]
+exclude_dirs = [
+    "**/*_test.py",
+    "./venv/",
+    "./*cache*/",
+    "./resources/",
+    "./notebooks/"
+]
+skips = ["B608"]
+
+# Pytest
+[tool.pytest.ini_options]
+testpaths = ["app"]
+python_files = ["*_test.py"]
+addopts = "--strict-markers --disable-pytest-warnings"
+markers = []
+
+# Pytest coverage
+[tool.coverage.paths]
+source = ["app", "*/site-packages"]
+
+[tool.coverage.run]
+source = ["app", "*/site-packages"]
+omit = ["**/__init__.py", "**/*_test.py"]

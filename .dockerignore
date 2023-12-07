@@ -1,0 +1,5 @@
+*cache/
+venv/
+logs/
+notebooks/
+dist/
