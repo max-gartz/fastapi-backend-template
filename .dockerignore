@@ -3,3 +3,9 @@ venv/
 logs/
 notebooks/
 dist/
+.github/
+
+.pre-commit-config.yaml
+.gitignore
+.env
+.secrets

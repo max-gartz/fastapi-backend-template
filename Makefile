@@ -5,7 +5,7 @@ venv:
 
 .PHONY: setup-poetry
 setup-poetry: ## Install poetry
-	curl -sSL https://install.python-poetry.org | POETRY_VERSION=1.6.1 python3 -
+	curl -sSL https://install.python-poetry.org | POETRY_VERSION=1.8.2 python3 -
 
 .PHONY: pre-commit
 pre-commit: ## Install pre-commit hooks
@@ -51,11 +51,29 @@ test-coverage: ## Check test coverage
 
 .PHONY: run
 run: ## Run the service locally
-	python3 -m app.main
+	bash entrypoint.sh
 
-.PHONY: build
-build: ## Build the docker image
+.PHONY: docker-build
+docker-build: ## Build the docker image
 	docker build -t $(or $(image), fastapi-backend-template:local) .
+
+.PHONY: docker-run
+docker-run: ## Run the docker image
+	docker run -it -p $(APP_PORT):$(APP_PORT) \
+	-e APP_HOST=$(APP_HOST) \
+	-e APP_PORT=$(APP_PORT) \
+	-e APP_TIMEOUT=$(APP_TIMEOUT) \
+	-e APP_WORKERS=$(APP_WORKERS) \
+	-e LOGGER_CONFIG_PATH=$(LOGGER_CONFIG_PATH) \
+	-e DATABASE_PROTOCOL=$(DATABASE_PROTOCOL) \
+ 	-e DATABASE_DRIVER=$(DATABASE_DRIVER) \
+    -e DATABASE_HOST=$(DATABASE_HOST) \
+    -e DATABASE_PORT=$(DATABASE_PORT) \
+    -e DATABASE_NAME=$(DATABASE_NAME) \
+    -e DATABASE_USER=$(DATABASE_USER) \
+    -e DATABASE_PASSWORD=$(DATABASE_PASSWORD) \
+    -e AUTH_SECRET_KEY=$(AUTH_SECRET_KEY) \
+	$(or $(image), fastapi-backend-template:local)
 
 .PHONY: clean
 clean: ## Clean up the project

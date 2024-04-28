@@ -1,5 +1,5 @@
 [build-system]
-requires = ["poetry-core==1.6.1"]
+requires = ["poetry-core==1.8.2"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.poetry]
@@ -10,62 +10,71 @@ authors = ["Maximilian Gartz <gartz.maximilian@gmail.com>"]
 license = ""
 readme = "README.md"
 packages = [{ include = "app" }]
-homepage = ""
-repository = ""
-documentation = ""
+repository = "https://github.com/max-gartz/fastapi-backend-template"
 keywords = []
 classifiers = []
 
 [tool.poetry.dependencies]
-python = ">=3.9.0,<3.10"
-pip = "^23.3.1"
-pre-commit = "^3.5.0"
-fastapi = "^0.104.1"
-pydantic = "^2.5.2"
-uvicorn = {extras = ["standard"], version = "^0.23.2"}
-gunicorn = "^21.2.0"
+python = ">=3.10.0,<3.11"
+pip = "23.3.2"
 toml = "^0.10.2"
-
+pyaml = "^23.12.0"
+fastapi = "^0.110.0"
+uvicorn = "^0.27.1"
+gunicorn = "^21.2.0"
+pydantic-settings = "^2.2.1"
+sqlalchemy = "^2.0.29"
+psycopg = {extras = ["binary"], version = "^3.1.18"}
+sqlmodel = "^0.0.16"
+python-jose = {extras = ["cryptography"], version = "^3.3.0"}
+bcrypt = "4.0.1"
+passlib = {extras = ["bcrypt"], version = "^1.7.4"}
+python-multipart = "^0.0.9"
+pydantic = {extras = ["email"], version = "^2.6.4"}
+alembic = "^1.13.1"
 
 [tool.poetry.group.dev]
 optional = true
 
 [tool.poetry.group.dev.dependencies]
-ruff = "^0.1.7"
-mypy = "^1.7.1"
-bandit = {extras = ["toml"], version = "^1.7.5"}
-pytest = "^7.4.0"
+bandit = {extras = ["toml"], version = "^1.7.7"}
+mypy = "^1.8.0"
+pre-commit = "^3.6.2"
+ruff = "^0.4.0"
+pytest = "^8.1.1"
 pytest-cov = "^4.1.0"
+httpx = "^0.27.0"
 
 
 [tool.ruff]
+src = ["."]
+exclude = ["venv"]
+line-length = 100
+target-version = "py310"
+
+[tool.ruff.lint]
 select = ["E", "F"]
 ignore = []
 fixable = ["A", "B", "C", "D", "E", "F"]
 unfixable = []
-src = ["."]
-exclude = ["venv", "**/*_test.py"]
 per-file-ignores = { }
-line-length = 100
 dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
-target-version = "py39"
 
-[tool.ruff.mccabe]
+[tool.ruff.lint.mccabe]
 max-complexity = 10
 
 [tool.mypy]
-python_version = 3.9
+python_version = "3.10"
 warn_return_any = false
 warn_unused_configs = true
 ignore_missing_imports = true
 follow_imports = "skip"
 disallow_untyped_defs = true
 disable_error_code = ["override", "attr-defined", "import", "empty-body"]
-exclude = ["venv/", "._test\\.py$"]
+exclude = ["venv/", "test_.\\.py$"]
 
 [tool.bandit]
 exclude_dirs = [
-    "**/*_test.py",
     "./venv/",
     "./*cache*/",
     "./resources/",
@@ -73,10 +82,13 @@ exclude_dirs = [
 ]
 skips = ["B608"]
 
+[tool.bandit.assert_used]
+skips = ["**/test_*.py", "**/*_test.py"]
+
 # Pytest
 [tool.pytest.ini_options]
-testpaths = ["app"]
-python_files = ["*_test.py"]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
 addopts = "--strict-markers --disable-pytest-warnings"
 markers = []
 
@@ -85,5 +97,5 @@ markers = []
 source = ["app", "*/site-packages"]
 
 [tool.coverage.run]
-source = ["app", "*/site-packages"]
-omit = ["**/__init__.py", "**/*_test.py"]
+source = ["app"]
+omit = ["**/__init__.py", "**/test_*.py"]

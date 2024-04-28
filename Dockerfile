@@ -1,14 +1,16 @@
-FROM python:3.9
+FROM python:3.10
 
 WORKDIR code
 
-COPY requirements.txt requirements.txt
-COPY pyproject.toml pyproject.toml
-COPY entrypoint.sh entrypoint.sh
 
-RUN pip install -r requirements.txt
+COPY Makefile pyproject.toml poetry.lock ./
+RUN make setup-poetry
 
-COPY app app
+ENV PATH=/root/.local/bin:${PATH}
+ENV POETRY_VIRTUALENVS_CREATE=false
+RUN make install
+
+COPY . .
 
 EXPOSE 8080
 

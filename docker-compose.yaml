@@ -1,0 +1,40 @@
+version: "3.9"
+
+services:
+
+  backend:
+    build: .
+    container_name: backend
+    ports:
+      - "8080:8080"
+    environment:
+      APP_HOST: "0.0.0.0"
+      APP_PORT: 8080
+      APP_TIMEOUT: 60
+      APP_WORKERS: 4
+      DATABASE_PROTOCOL: postgresql
+      DATABASE_DRIVER: psycopg
+      DATABASE_HOST: db
+      DATABASE_PORT: 5432
+      DATABASE_NAME: postgres
+      DATABASE_USER: postgres
+      DATABASE_PASSWORD: ${DATABASE_PASSWORD}
+      AUTH_SECRET_KEY: ${AUTH_SECRET_KEY}
+      LOGGER_CONFIG_PATH: logging.yaml
+    depends_on:
+      - db
+
+  db:
+    image: postgres:16
+    container_name: db
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+
+volumes:
+    postgres-data:

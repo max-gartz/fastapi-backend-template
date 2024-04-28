@@ -9,7 +9,7 @@ on:
       - main
 
 env:
-  PYTHON_VERSION: 3.9
+  PYTHON_VERSION: "3.10"
 
 jobs:
   code-quality:
@@ -20,8 +20,14 @@ jobs:
         uses: actions/setup-python@v4
         with:
           python-version: ${{ env.PYTHON_VERSION }}
+      - name: Setup Poetry
+        run: |
+          make setup-poetry
+          echo "$HOME/.local/bin" >> $GITHUB_PATH
       - name: Install dependencies
-        run: pip install -r requirements.dev.txt
+        env:
+          POETRY_VIRTUALENVS_CREATE: false
+        run: make install-dev
       - name: Analyse the code style with ruff
         run: make ruff
       - name: Analyse typing with mypy
@@ -29,7 +35,7 @@ jobs:
       - name: Analyse security risks with bandit
         run: make bandit
       - name: Run tests
-        run: make test
+        run: make test-coverage
 
   build:
     needs: code-quality
