@@ -28,7 +28,6 @@ class UserCreate(BaseModel):
     email: EmailStr
     name: str
     password: SecretStr
-    is_admin: bool = False
 
 
 class UserUpdate(BaseModel):

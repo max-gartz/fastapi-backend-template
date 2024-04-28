@@ -22,7 +22,7 @@ def create_chat(
         db: Session = Depends(get_db_session),
         current_user: User = Depends(get_current_user)
 ) -> ChatRead:
-    if user_id != current_user.id:
+    if not current_user.is_admin and user_id != current_user.id:
         logger.error("User not authorized to create chat for another user")
         raise HTTPException(
             status_code=403,
@@ -41,7 +41,7 @@ def get_chats(
         db: Session = Depends(get_db_session),
         current_user: User = Depends(get_current_user)
 ) -> List[ChatRead]:
-    if user_id != current_user.id:
+    if not current_user.is_admin and user_id != current_user.id:
         logger.error("User not authorized to list chats for another user")
         raise HTTPException(status_code=403, detail="Not authorized to list chats for another user")
     chats = db.exec(select(Chat).where(Chat.user_id == user_id)).all()
@@ -55,7 +55,7 @@ def delete_chat(
         db: Session = Depends(get_db_session),
         current_user: User = Depends(get_current_user)
 ) -> ChatRead:
-    if user_id != current_user.id:
+    if not current_user.is_admin and user_id != current_user.id:
         logger.error("User not authorized to delete chat for another user")
         raise HTTPException(
             status_code=403,
@@ -78,7 +78,7 @@ def create_chat_message(
         db: Session = Depends(get_db_session),
         current_user: User = Depends(get_current_user)
 ) -> ChatMessageRead:
-    if user_id != current_user.id:
+    if not current_user.is_admin and user_id != current_user.id:
         logger.error("User not authorized to create chat message for another user")
         raise HTTPException(
             status_code=403,
@@ -95,7 +95,7 @@ def create_chat_message(
             .order_by(col(ChatMessage.created_at).desc())
         )
     ).first()
-    if last_message.role == message_data.role:
+    if last_message and last_message.role == message_data.role:
         logger.error("Message roles need to alternate between user and assistant")
         raise HTTPException(
             status_code=400,
@@ -115,7 +115,7 @@ def get_chat_messages(
         db: Session = Depends(get_db_session),
         current_user: User = Depends(get_current_user)
 ) -> List[ChatMessageRead]:
-    if user_id != current_user.id:
+    if not current_user.is_admin and user_id != current_user.id:
         logger.error("User not authorized to list chat messages for another user")
         raise HTTPException(
             status_code=403,
